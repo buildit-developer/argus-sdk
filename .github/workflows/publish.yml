@@ -6,6 +6,7 @@ on:
     paths:
       - 'node/package.json'
       - 'python/setup.py'
+  workflow_dispatch:
 
 jobs:
   publish-node:
