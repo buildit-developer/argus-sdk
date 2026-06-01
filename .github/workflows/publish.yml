@@ -10,29 +10,27 @@ on:
 jobs:
   publish-node:
     runs-on: ubuntu-latest
-    if: contains(github.event.commits[0].modified, 'node/package.json') || contains(github.event.commits[0].added, 'node/package.json')
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Check if node version changed
-        id: node-version
+      - name: Check if node version bumped
+        id: check
         run: |
-          OLD=$(git show HEAD~1:node/package.json | python3 -c "import json,sys; print(json.load(sys.stdin).get('version',''))" 2>/dev/null || echo "")
+          OLD=$(git show HEAD~1:node/package.json | python3 -c "import json,sys; print(json.load(sys.stdin)['version'])" 2>/dev/null || echo "0.0.0")
           NEW=$(python3 -c "import json; print(json.load(open('node/package.json'))['version'])")
-          echo "old=$OLD"
-          echo "new=$NEW"
-          echo "changed=$([ '$OLD' != '$NEW' ] && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "old=$OLD new=$NEW"
+          echo "bumped=$([ '$OLD' != '$NEW' ] && echo true || echo false)" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-node@v4
-        if: steps.node-version.outputs.changed == 'true'
+        if: steps.check.outputs.bumped == 'true'
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Publish to npm
-        if: steps.node-version.outputs.changed == 'true'
+        if: steps.check.outputs.bumped == 'true'
         run: npm publish --access public
         working-directory: node
         env:
@@ -40,27 +38,26 @@ jobs:
 
   publish-python:
     runs-on: ubuntu-latest
-    if: contains(github.event.commits[0].modified, 'python/setup.py') || contains(github.event.commits[0].added, 'python/setup.py')
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Check if python version changed
-        id: py-version
+      - name: Check if python version bumped
+        id: check
         run: |
-          OLD=$(git show HEAD~1:python/setup.py | python3 -c "import re,sys; m=re.search(r'version=\"([^\"]+)\"',sys.stdin.read()); print(m.group(1) if m else '')" 2>/dev/null || echo "")
+          OLD=$(git show HEAD~1:python/setup.py | python3 -c "import re,sys; m=re.search(r'version=\"([^\"]+)\"',sys.stdin.read()); print(m.group(1) if m else '0.0.0')" 2>/dev/null || echo "0.0.0")
           NEW=$(python3 -c "import re; m=re.search(r'version=\"([^\"]+)\"',open('python/setup.py').read()); print(m.group(1))")
           echo "old=$OLD new=$NEW"
-          echo "changed=$([ '$OLD' != '$NEW' ] && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "bumped=$([ '$OLD' != '$NEW' ] && echo true || echo false)" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-python@v5
-        if: steps.py-version.outputs.changed == 'true'
+        if: steps.check.outputs.bumped == 'true'
         with:
           python-version: '3.11'
 
       - name: Build and publish to PyPI
-        if: steps.py-version.outputs.changed == 'true'
+        if: steps.check.outputs.bumped == 'true'
         run: |
           pip install build twine --quiet
           python -m build
