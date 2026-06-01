@@ -8,7 +8,7 @@ import site
 
 setup(
     name="buildit-argus",
-    version="0.1.3",
+    version="0.1.4",
     description="Argus observability SDK for Python — tracks per-call cost and latency for Anthropic and OpenAI",
     long_description=long_description,
     long_description_content_type="text/markdown",

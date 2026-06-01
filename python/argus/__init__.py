@@ -6,7 +6,7 @@ import threading
 import urllib.request
 from typing import Callable, Any, Optional
 
-_endpoint: str = os.getenv("ARGUS_ENDPOINT", "").rstrip("/")
+_endpoint: str = os.getenv("ARGUS_ENDPOINT", "https://api.buildit.sh").rstrip("/")
 _api_key: str = os.getenv("ARGUS_KEY", "")
 
 
@@ -19,7 +19,7 @@ def init(endpoint: str = "", api_key: str = "") -> None:
 
 
 def _send(attempts: list) -> None:
-    if not _endpoint or not _api_key or not attempts:
+    if not _api_key or not attempts:
         return
     body = json.dumps({"attempts": attempts}).encode()
     req = urllib.request.Request(

@@ -1,6 +1,6 @@
 {
   "name": "@buildit-developer/argus-node",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Argus observability SDK for Node.js — zero-code auto-instrumentation for Anthropic, OpenAI, Vercel AI SDK and LangChain",
   "main": "index.js",
   "exports": {
@@ -12,8 +12,19 @@
     "./auto": "./auto.js"
   },
   "license": "MIT",
-  "keywords": ["llm", "observability", "anthropic", "openai", "langchain", "vercel-ai", "argus", "auto-instrumentation"],
-  "engines": { "node": ">=18" },
+  "keywords": [
+    "llm",
+    "observability",
+    "anthropic",
+    "openai",
+    "langchain",
+    "vercel-ai",
+    "argus",
+    "auto-instrumentation"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1"
   }

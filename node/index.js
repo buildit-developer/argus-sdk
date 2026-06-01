@@ -4,7 +4,7 @@ const { randomBytes } = require('crypto')
 const https = require('https')
 const http = require('http')
 
-let _endpoint = process.env.ARGUS_ENDPOINT || ''
+let _endpoint = (process.env.ARGUS_ENDPOINT || 'https://api.buildit.sh').replace(/\/$/, '')
 let _apiKey = process.env.ARGUS_KEY || ''
 
 function init({ endpoint, apiKey } = {}) {
@@ -17,7 +17,7 @@ function _id(bytes) {
 }
 
 function _send(attempts) {
-  if (!_endpoint || !_apiKey || !attempts.length) return Promise.resolve()
+  if (!_apiKey || !attempts.length) return Promise.resolve()
   const body = JSON.stringify({ attempts })
   const url = new URL(_endpoint + '/api/argus/ingest')
   const opts = {
