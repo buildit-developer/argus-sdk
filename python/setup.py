@@ -5,7 +5,7 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name="buildit-argus",
-    version="0.1.0",
+    version="0.1.1",
     description="Argus observability SDK for Python — tracks per-call cost and latency for Anthropic and OpenAI",
     long_description=long_description,
     long_description_content_type="text/markdown",
