@@ -3,9 +3,12 @@ from setuptools import setup, find_packages
 with open("README.md", encoding="utf-8") as f:
     long_description = f.read()
 
+from distutils.command.install import install
+import site
+
 setup(
     name="buildit-argus",
-    version="0.1.2",
+    version="0.1.3",
     description="Argus observability SDK for Python — tracks per-call cost and latency for Anthropic and OpenAI",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -19,4 +22,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    data_files=[('', ['buildit_argus.pth'])],
 )

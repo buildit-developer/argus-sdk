@@ -1,19 +1,19 @@
 {
   "name": "@buildit-developer/argus-node",
-  "version": "0.1.3",
-  "description": "Argus observability SDK for Node.js \u2014 tracks per-call cost and latency for Anthropic and OpenAI",
+  "version": "0.1.4",
+  "description": "Argus observability SDK for Node.js — zero-code auto-instrumentation for Anthropic, OpenAI, Vercel AI SDK and LangChain",
   "main": "index.js",
-  "license": "MIT",
-  "keywords": [
-    "llm",
-    "observability",
-    "anthropic",
-    "openai",
-    "argus"
-  ],
-  "engines": {
-    "node": ">=18"
+  "exports": {
+    ".": "./index.js",
+    "./register": {
+      "import": "./register.mjs",
+      "require": "./register.cjs"
+    },
+    "./auto": "./auto.js"
   },
+  "license": "MIT",
+  "keywords": ["llm", "observability", "anthropic", "openai", "langchain", "vercel-ai", "argus", "auto-instrumentation"],
+  "engines": { "node": ">=18" },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1"
   }
