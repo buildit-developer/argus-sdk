@@ -1,0 +1,71 @@
+name: Publish SDKs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'node/package.json'
+      - 'python/setup.py'
+
+jobs:
+  publish-node:
+    runs-on: ubuntu-latest
+    if: contains(github.event.commits[0].modified, 'node/package.json') || contains(github.event.commits[0].added, 'node/package.json')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if node version changed
+        id: node-version
+        run: |
+          OLD=$(git show HEAD~1:node/package.json | python3 -c "import json,sys; print(json.load(sys.stdin).get('version',''))" 2>/dev/null || echo "")
+          NEW=$(python3 -c "import json; print(json.load(open('node/package.json'))['version'])")
+          echo "old=$OLD"
+          echo "new=$NEW"
+          echo "changed=$([ '$OLD' != '$NEW' ] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+      - uses: actions/setup-node@v4
+        if: steps.node-version.outputs.changed == 'true'
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npm
+        if: steps.node-version.outputs.changed == 'true'
+        run: npm publish --access public
+        working-directory: node
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-python:
+    runs-on: ubuntu-latest
+    if: contains(github.event.commits[0].modified, 'python/setup.py') || contains(github.event.commits[0].added, 'python/setup.py')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if python version changed
+        id: py-version
+        run: |
+          OLD=$(git show HEAD~1:python/setup.py | python3 -c "import re,sys; m=re.search(r'version=\"([^\"]+)\"',sys.stdin.read()); print(m.group(1) if m else '')" 2>/dev/null || echo "")
+          NEW=$(python3 -c "import re; m=re.search(r'version=\"([^\"]+)\"',open('python/setup.py').read()); print(m.group(1))")
+          echo "old=$OLD new=$NEW"
+          echo "changed=$([ '$OLD' != '$NEW' ] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+      - uses: actions/setup-python@v5
+        if: steps.py-version.outputs.changed == 'true'
+        with:
+          python-version: '3.11'
+
+      - name: Build and publish to PyPI
+        if: steps.py-version.outputs.changed == 'true'
+        run: |
+          pip install build twine --quiet
+          python -m build
+          twine upload dist/*
+        working-directory: python
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
