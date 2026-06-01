@@ -1,8 +1,9 @@
 {
   "name": "@buildit-developer/argus-node",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Argus observability SDK for Node.js — zero-code auto-instrumentation for Anthropic, OpenAI, Vercel AI SDK and LangChain",
   "main": "index.js",
+  "bin": { "argus": "./bin/argus.js" },
   "exports": {
     ".": "./index.js",
     "./register": {
