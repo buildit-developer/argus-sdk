@@ -1,0 +1,20 @@
+{
+  "name": "argus-node",
+  "version": "0.1.0",
+  "description": "Argus observability SDK for Node.js — tracks per-call cost and latency for Anthropic and OpenAI",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": [
+    "llm",
+    "observability",
+    "anthropic",
+    "openai",
+    "argus"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1"
+  }
+}
