@@ -9,11 +9,11 @@ Built for [buildit.sh](https://buildit.sh) Argus observability dashboard.
 ## Node.js
 
 ```bash
-npm install argus-node
+npm install @buildit-developer/argus-node
 ```
 
 ```js
-const argus = require('argus-node')
+const argus = require('@buildit-developer/argus-node')
 
 argus.init({
   endpoint: 'https://api.buildit.sh',
