@@ -4,6 +4,10 @@
 const { spawn } = require('child_process')
 const path = require('path')
 
+// Set up OTel provider in THIS process before spawning child
+// (child process inherits env, OTel is set up there via register.mjs)
+
+
 const args = process.argv.slice(2)
 
 if (!args.length) {

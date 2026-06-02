@@ -3,6 +3,7 @@
 const { randomBytes } = require('crypto')
 const https = require('https')
 const http = require('http')
+const { Batcher } = require('./_batch')
 
 const ENDPOINT = (process.env.ARGUS_ENDPOINT || 'https://api.buildit.sh').replace(/\/$/, '')
 const API_KEY = process.env.ARGUS_KEY || ''
@@ -28,13 +29,16 @@ function _send(attempts) {
   req.end()
 }
 
+// Buffers attempts and POSTs them in batches via _send (see _batch.js).
+const _batcher = new Batcher(_send)
+
 function _record({ provider, model, status, inputTokens, outputTokens, startMs }) {
-  _send([{
+  _batcher.add({
     trace_id: _id(16), span_id: _id(8), op_name: 'chat',
     provider, model, status,
     input_tokens: inputTokens ?? null, output_tokens: outputTokens ?? null,
     latency_ms: Date.now() - startMs, start_ns: startMs * 1e6, options: [],
-  }])
+  })
 }
 
 // ── Anthropic SDK ──────────────────────────────────────────────────────────

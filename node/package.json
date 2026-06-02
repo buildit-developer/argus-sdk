@@ -1,16 +1,19 @@
 {
   "name": "@buildit-developer/argus-node",
-  "version": "0.1.6",
+  "version": "0.1.11",
   "description": "Argus observability SDK for Node.js — zero-code auto-instrumentation for Anthropic, OpenAI, Vercel AI SDK and LangChain",
   "main": "index.js",
-  "bin": { "argus": "./bin/argus.js" },
+  "bin": {
+    "argus": "./bin/argus.js"
+  },
   "exports": {
     ".": "./index.js",
     "./register": {
       "import": "./register.mjs",
       "require": "./register.cjs"
     },
-    "./auto": "./auto.js"
+    "./auto": "./auto.js",
+    "./otel": "./otel.js"
   },
   "license": "MIT",
   "keywords": [
@@ -27,6 +30,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.100.1"
+    "@anthropic-ai/sdk": "^0.100.1",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/sdk-node": "^0.218.0",
+    "@opentelemetry/sdk-trace-base": "^2.7.1"
   }
 }

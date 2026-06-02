@@ -3,6 +3,7 @@
 const { randomBytes } = require('crypto')
 const https = require('https')
 const http = require('http')
+const { Batcher } = require('./_batch')
 
 let _endpoint = (process.env.ARGUS_ENDPOINT || 'https://api.buildit.sh').replace(/\/$/, '')
 let _apiKey = process.env.ARGUS_KEY || ''
@@ -48,6 +49,9 @@ function _send(attempts) {
   })
 }
 
+// Buffers attempts and POSTs them in batches via _send (see _batch.js).
+const _batcher = new Batcher(_send)
+
 // Core tracking function — wraps any async fn
 async function track({ provider, model, fn, opName, options } = {}) {
   const traceId = _id(16)
@@ -68,7 +72,7 @@ async function track({ provider, model, fn, opName, options } = {}) {
     throw err
   } finally {
     const latencyMs = Date.now() - startMs
-    _send([{
+    _batcher.add({
       trace_id: traceId,
       span_id: spanId,
       op_name: opName || 'model_request',
@@ -80,7 +84,7 @@ async function track({ provider, model, fn, opName, options } = {}) {
       latency_ms: latencyMs,
       start_ns: startMs * 1e6,
       options: options || [],
-    }]).catch(() => {})
+    })
   }
   return result
 }
